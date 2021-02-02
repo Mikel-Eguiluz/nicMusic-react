@@ -4,16 +4,21 @@ import { v4 as uuidv4 } from "uuid";
 import { Form, Col, Container, Button } from "react-bootstrap";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useParams, useHistory } from "react-router-dom";
 
 import { ScoresContext } from "./../../context/ScoreContext";
 
 export default function ScoreForm() {
+  let { id } = useParams();
+  console.log(id);
+  let history = useHistory();
+
   let defaultValues = {
-    _id: uuidv4(),
-    title: "",
+    id: "",
+    title: "55",
     composer: "",
     style: "",
-    instrumentation: "",
+    instrumentation: [],
     stock: 0,
     owner: "",
   };
@@ -26,25 +31,43 @@ export default function ScoreForm() {
     owner: yup.string(),
   });
 
+  // const { isDirty, isValid, isSubmitting } = formState;
+
+  //get the addScore function from the context
+  const { addScore, updateScore, scores } = useContext(ScoresContext);
+
+  let submitHandler = () => {};
+
+  if (id) {
+    //having an id means we are updating
+    const scoreToBeUpdated = scores.find((score) => id === score.id); //find the score in the array in the context
+    console.log(defaultValues);
+    defaultValues = scoreToBeUpdated; // load the select score data in the inputs
+    console.log(defaultValues);
+    submitHandler = (data, e) => {
+      console.log("data", data);
+      data.id = id;
+      data.instrumentation = [data.instrumentation];
+      updateScore(id, data);
+      history.push("/");
+      console.log("data", data);
+    };
+  } else {
+    submitHandler = (data, e) => {
+      data.id = uuidv4();
+      data.instrumentation = [data.instrumentation];
+      addScore(data);
+      reset(defaultValues);
+      console.log("data", data, "evt", e);
+    };
+  }
   //https://react-hook-form.com/api#useForm
-  const { register, handleSubmit, errors, reset, formState } = useForm({
+  const { register, handleSubmit, errors, reset } = useForm({
     resolver: yupResolver(schema),
     mode: "onChange",
     reValidateMode: "onChange",
     defaultValues: defaultValues,
   });
-  const { isDirty, isValid, isSubmitting } = formState;
-
-  //get the addScore function from the context
-  const { addScore } = useContext(ScoresContext);
-
-  const submitHandler = (data, e) => {
-    data._id = uuidv4();
-    data.instrumentation = [data.instrumentation];
-    addScore(data);
-    reset(defaultValues);
-    console.log("data", data, "evt", e);
-  };
   return (
     <Container>
       <Form onSubmit={handleSubmit(submitHandler)}>
@@ -164,11 +187,11 @@ export default function ScoreForm() {
             </Form.Group>
           </Col>
         </Form.Row>
-        <p>{`${!isValid && isDirty}`}</p>
+        {/* <p>{`${!isValid && isDirty}`}</p>
         <p>Valid: {`${isValid}`}</p>
         <p>Dirty: {`${isDirty}`}</p>
         <p>Submitting: {`${isSubmitting}`}</p>
-        <p>{JSON.stringify(errors)}</p>
+        <p>{JSON.stringify(errors)}</p> */}
         <Form.Row>
           <Col>
             <Button type="reset" onClick={reset} variant="secondary">

@@ -20,34 +20,32 @@ export default function ScoreList() {
   }, [fetchScores]);
 
   return (
-    <Table striped hover bordered size="sm">
-      {error && <p>{error}</p>}
+    <>
+      {error && <h2>{error}</h2>}
       {loading && <h2>Loading..</h2>}
-      <thead>
-        <tr className="table-primary">
-          <th scope="col">Title</th>
-          <th scope="col">Composer</th>
-          <th scope="col">Style</th>
-          <th scope="col">Instrumentation</th>
-          <th scope="col">Owner</th>
-          <th scope="col">Stock</th>
-          <th scope="col"></th>
-        </tr>
-      </thead>
-      <tbody id="score-table-body">
-        {scores.length ? (
-          scores.map((score) => (
-            <ScoreRow key={score._id.toString()} score={score} />
-          ))
-        ) : (
-          <tr>
-            <td colSpan="7">
-              <h1>No Scores</h1>
-            </td>
+      <Table striped hover bordered size="sm">
+        <thead>
+          <tr className="table-primary">
+            <th scope="col">Title</th>
+            <th scope="col">Composer</th>
+            <th scope="col">Style</th>
+            <th scope="col">Instrumentation</th>
+            <th scope="col">Owner</th>
+            <th scope="col">Stock</th>
+            <th scope="col"></th>
           </tr>
-        )}
-      </tbody>
-    </Table>
+        </thead>
+        <tbody id="score-table-body">
+          {scores.length ? (
+            scores.map((score) => <ScoreRow key={score.id} score={score} />)
+          ) : (
+            <tr>
+              <td colSpan="7">No Scores</td>
+            </tr>
+          )}
+        </tbody>
+      </Table>
+    </>
   );
 }
 // const SCORES_ENDPOINT = "http://localhost:8000/scores";

@@ -1,5 +1,6 @@
 import React from "react";
+import ScoreForm from "./../../components/ScoreForm/ScoreForm";
 
 export default function UpdateScore() {
-  return <h1> upd </h1>;
+  return <ScoreForm />;
 }
